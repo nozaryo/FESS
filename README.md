@@ -1,9 +1,16 @@
 # FESS
 F.T.E. Rocket Simulating System
 ## Features
-:user* &nbsp; か# =>シンボル
-:user* &ensp; き# =>シンボル
-:user* &emsp; く# =>シンボル
-:user* &nbsp; &nbsp; &nbsp; &nbsp; け# =>シンボル
+|  F.E.S.S.
+|  ├─Detail mood
+|  │  ├─Trajectory
+|  │  └─Open Parachute
+|  └─Scatter mood
+|      ├─Trajectory
+|      │  ├─Single output
+|      │  └─Multiple output
+|      └─Open Parachute
+|          ├─Single output
+|          └─Multiple output
 # Authors
 nozaryo

@@ -6,11 +6,11 @@ F.E.S.S.
 │  ├─Trajectory  
 │  └─Open Parachute  
 └─Scatter mood  
-[    ]├─Trajectory  
-[    ]│  ├─Single output  
-[    ]│  └─Multiple output  
-[    ]└─Open Parachute  
-[       ]├─Single output  
-[       ]└─Multiple output  
+<span>    </span>├─Trajectory  
+<span>    </span>│  ├─Single output  
+<span>    </span>│  └─Multiple output  
+<span>    </span>└─Open Parachute  
+<span>       </span>├─Single output  
+<span>       </span>└─Multiple output  
 # Authors
 nozaryo

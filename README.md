@@ -3,10 +3,10 @@ F.T.E. Rocket Simulating System
 ## Features
 ~~~
 F.E.S.S.  
-├─Detail mood  
+├─Detail mode  
 │  ├─Trajectory  
 │  └─Open Parachute  
-└─Scatter mood  
+└─Scatter mode  
     ├─Trajectory  
     │  ├─Single output  
     │  └─Multiple output  

@@ -1,0 +1,29 @@
+{
+"info":{
+	"TEAM":		"",
+	"NAME":		"",
+	"DATE":		"",
+	"VERSION":	""
+	},
+
+"rocket":{
+	"ref_len":	1.3464,
+	"diam":		0.089,
+	"CGlen_i":	0.782,
+	"CGlen_f":	0.772,
+	"mass_i":	4.306,
+	"mass_f":	3.883,
+	"Iyz_i":	1.782,
+	"Iyz_f":	1.607,
+	"CPlen":	0.984,
+	"Cd":		0.550,
+	"Cna":		8.09,
+	"Cmq":		-2.00,
+	"vel_1st":	11.4,
+	"op_type_1st":	0
+	},
+
+"motor":{
+	"motor_file":	"Hypertek_J170.txt"
+	}
+}

@@ -1,0 +1,36 @@
+{
+	"info":{
+		"TEAM":		"FTE",
+		"NAME":		"Sirius",
+		"VERSION":	"5.0"
+		},
+
+"rocket":{
+	"ref_len":	1.782,
+	"diam":		0.1160,
+	"mass_i":	7.850843,
+	"mass_f":	7.488,
+	"CGlen_i":	0.978127,
+	"CGlen_f":	0.964,
+	"Iyz_i":	1.4256,
+	"Iyz_f":	1.3877,
+	"CPlen":	1.166,
+	"Cd":		0.52,
+	"Cna":		3.5,
+	"Cmq":		-0.019425253,
+	"vel_1st":	9.4398,
+	"op_type_1st":	0,
+	"delay_time_1st": 0
+	},
+
+"motor":{
+	"motor_file":	"FTE_j170.txt"
+	},
+
+"environment":{
+	"place":	"nosiro_land",
+	"rail_len":	5.0,
+	"rail_azi":	-130.0,
+	"rail_elev": 88
+	}
+}

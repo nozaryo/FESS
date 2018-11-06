@@ -21,7 +21,7 @@ from scipy.integrate import odeint
 import calculation as cal
 import quaternion as qt
 import environment as env
-import summary as sum
+import plot_process as plot
 
 # Define computation setting ---------------------------
 dt = 0.001        # time interval
@@ -46,7 +46,7 @@ wind_case = np.array([wind_vel_st, wind_vel_interval, vel_pat, dir_pat])
 
 # Generate rsim object ----------------------------------------
 sim = cal.RocketSim()
-post =  sum.PostProcess()
+post =  plot.PostProcess()
 
 def get_option():
     args = ArgumentParser(prog='F.T.E. Rocket Simulating System')
@@ -173,7 +173,7 @@ print("vel_1st : " + str(stdin_rocket["vel_1st"]))
 print("delay_time_1st: " + str(stdin_rocket.get("delay_time_1st", 0.0)))
 print("vel_2nd : " + str(stdin_rocket.get("vel_2nd", 0.0)))    # 0 means not to open 2nd para
 
-#simulation.set_param(filename)
+sim.set_param(filename)
 if not args.mode:
     print("")
     print("==> Select Simulation Mode")

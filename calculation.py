@@ -46,6 +46,8 @@ class RocketSim:
             sys.exit()
 
         # Load rocket parameter
+        self.Ix_i = 0.02
+        self.Ix_f = 0.01
         try:
             self.ref_len = stdin_rocket["ref_len"]
             self.diam = stdin_rocket["diam"]

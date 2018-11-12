@@ -25,12 +25,12 @@ import plot_process as plot
 
 # Define computation setting ---------------------------
 dt = 0.001        # time interval
-end_time = 200.0        # computation end time
+end_time = 1000.0        # computation end time
 
 # Define wind pattern setting
 wind_vel_st = 1.0    # minimum wind velocity [m/s]
-wind_vel_interval = 1.0    # interval of wind velocity [m/s]
-vel_pat = 7   # velocity range [m/s]
+wind_vel_interval = 2.0    # interval of wind velocity [m/s]
+vel_pat = 3   # velocity range [m/s]
 dir_pat = 8   # wind direction derivation (deg = 360.0/dir_pat)
 
 # Define launcher elevation setting
@@ -65,7 +65,6 @@ def get_option():
 
 if __name__ == '__main__':
     args = get_option()
-    print(args)
 
 files = os.listdir("./input/")
 
@@ -254,7 +253,7 @@ if sim_mode == 0:
     result = sim.execute(time_vec)
 
     # Post process
-    sum.set_variety(result, wind_cond,rail_cond)
+    post.set_variety(result, wind_cond,rail_cond)
     post.plot_detail()
 
 elif sim_mode == 1:

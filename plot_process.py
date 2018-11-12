@@ -112,6 +112,8 @@ class JudgeInside():
 
         # odd number : inside,  even number : outside
         judge_result = np.mod(cross_num, 2)
+        print(cross_num)
+        print(judge_result)
 
         # check judge circle mode
         if circle_flag == True:
@@ -305,14 +307,13 @@ class PostProcess():
         #print("max kakudo between axis and vel: {0} deg".format(self.max_kakudo_deg[0]))
         print("drop point   : {0}".format(self.drop_point[0,:]))
 
-        #plt.figure()
-        #plt.plot(self.time_vec, self.height, label='height')
-        #plt.plot(self.time_vec, self.angle_body_deg[:,1], label='beta')
-        #plt.xlabel("time[sec]")
-        #plt.ylabel("angle[deg]")
-        #plt.legend()
+        plt.figure()
+        plt.plot(self.time_vec, self.vel_norm, label='vel_norm')
+        plt.xlabel("time[sec]")
+        plt.ylabel("vel[m/s]")
+        plt.legend()
 
-        #plt.show()
+        plt.show()
 
         plt.show()
 
@@ -361,9 +362,11 @@ class PostProcess():
 
         earth_radius = 6378150.0    # [km]
 
+        self.place = place
+
         if place == 'Izu_land':
 
-            self.fig, self.ax = plt.subplots(figsize=(10,8))
+            self.fig, self.ax = plt.subplots(figsize=(15,8))
 
             # Set lat/long coordinates
             # point_origin : map origin
@@ -566,6 +569,44 @@ class PostProcess():
             self.ax.plot(self.xy_range[:,0], self.xy_range[:,1], '--', color=color_line)
             #plt.plot(self.xy_range[:,0], self.xy_range[:,1], '.', color='r')
 
+        elif place == 'no_place':
+
+            # Set lat/long coordinates
+            # point_origin : map origin
+            # point_center : circle limt area
+            # point_range  : limit area vertex
+            self.fig, self.ax = plt.subplots(figsize=(10,8))
+            self.lim_radius = 10.0   # define circle limit area
+
+
+            # Set magnetic declination
+
+            # Convert from lat/long to meter (ENU coordinate)
+            self.xy_center = np.zeros((1,2))
+            self.xy_range = np.zeros((5,2))
+
+            self.xy_range[0,]=[100,100]
+            self.xy_range[1,]=[100,-100]
+            self.xy_range[2,]=[-100,-100]
+            self.xy_range[3,]=[-100,100]
+            self.xy_range[4,]=self.xy_range[0,]
+
+
+            # Setup MAP image --------------------------
+            # Define color
+            color_line = '#ffbf00'    # Yellow
+            color_circle = 'r'    # Red
+
+            # Set circle object
+            #self.ax = plt.axes()
+            circle = patches.Circle(xy=[0,0], radius=self.lim_radius,
+                                        ec=color_circle, fill=False)
+            self.ax.add_patch(circle)
+            self.ax.plot(0, 0, '.', color=color_circle)
+
+            self.ax.plot(self.xy_range[:,0], self.xy_range[:,1], '--', color=color_line)
+            #plt.plot(self.xy_range[:,0], self.xy_range[:,1], '.', color='r')
+
 
 
 
@@ -576,7 +617,7 @@ class PostProcess():
         vel_pat = int(wind_case[2])
         dir_pat = int(wind_case[3])
 
-        # Call JudgeInside class
+        # Call JudgeInside class]
         self.judge_result = np.zeros([dir_pat, vel_pat], dtype=bool)
         judge = JudgeInside()
         judge.set_limit_area(self.xy_range)
@@ -724,7 +765,7 @@ class PostProcess():
                                                              'Max drop veloity {:.3f}m/s (wind {}m/s {} deg)'.format(np.amax(max_drop_vel_buff),max_drop_vel_vel,max_drop_vel_dir),fontsize=7)
 
         plt.savefig('./result/{}deg.png'.format(int(deg)))
-        #plt.show()
+        plt.show()
 
 
     def plot_orbit(var):

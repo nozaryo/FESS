@@ -3,6 +3,7 @@ import numpy as np
 import plot_process as post
 import matplotlib.pyplot as plt
 
+
 #########################################################################
 def wind_method(height, wind):
     """

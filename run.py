@@ -4,7 +4,6 @@ Edited by Ryoya Nozaki
 
 reference
 https://github.com/Shun0228/RocketSimulation
-https://qiita.com/taashi/items/400871fb13df476f42d2
 
 """
 import os

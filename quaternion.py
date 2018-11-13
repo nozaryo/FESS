@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.linalg as nplin
 
+
 #########################################################################
 def int_quat(rail_ang, rail_dir):
     """

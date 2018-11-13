@@ -6,6 +6,7 @@ from scipy import integrate
 
 import matplotlib.pyplot as plt
 
+
 #########################################################################
 def thrust_load(motor_name):
     '''
@@ -47,7 +48,7 @@ def show_hist(motor_name):
     thrust = np.zeros(count)
 
     thrust_impulse = integrate.quad(linear_thrust, 0, comb_time)
-    
+
     print("")
     #print("Max thrust    : {0}").format()
     print("Total impulse : {0} Ns".format(thrust_impulse[0]))
@@ -95,5 +96,3 @@ if __name__ == "__main__":
         motor_name = 'Hypertek_J250.txt'
 
     show_hist(motor_name)
-
-    

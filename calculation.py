@@ -10,7 +10,6 @@ import thrust as th
 import environment as env
 from scipy.integrate import odeint
 
-
 #########################################################################
 class RocketSim:
     """ 5DoF rocket simulation """

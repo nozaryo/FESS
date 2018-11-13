@@ -1,5 +1,7 @@
 # FESS
 F.T.E. Rocket Simulating System
+
+[Shun0228のRocketSimulation](https://github.com/Shun0228/RocketSimulation)を参考に開発しているものです.
 ## Features
 ~~~
 F.E.S.S.  

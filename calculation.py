@@ -60,7 +60,7 @@ class RocketSim:
             self.CPlen = stdin_rocket["CPlen"]
             self.Cd = stdin_rocket["Cd"]
             self.Cna = stdin_rocket["Cna"]
-            self.Cmq = stdin_rocket.get("Cmq", -2.0)
+
 
         except KeyError:
             print("===========================================================================")
@@ -69,6 +69,12 @@ class RocketSim:
             print("Please check parameter at ./input/****.json.")
             print("==========================================================================")
             sys.exit()
+
+        if "Cmq" not in stdin_rocket:
+            self.Cmq = -(stdin_rocket["Cna"]/2)*( ( (stdin_rocket["CPlen"] - stdin_rocket["CGlen_f"])/ stdin_rocket["ref_len"] ) )**2
+        else:
+            self.Cmq = stdin_rocket.get("Cmq", -2.0)
+
 
         # Load 1st parachute parameter
         if "vel_1st" not in stdin_rocket:

@@ -8,6 +8,7 @@ import environment as env
 import numpy.linalg as nplin
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from matplotlib.ticker import *
 from PIL import Image
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -43,7 +44,7 @@ class JudgeInside():
         self.lim_radius = lim_radius
 
 
-    def judge_inside(self, check_point):
+    def judge_inside(self, check_point, place):
 
         # Check limit circle area is defined
         try:
@@ -61,59 +62,61 @@ class JudgeInside():
         point_num = self.xy_range.shape[0]
 
         # Judge inside or outside by cross number
-        for point in range(point_num - 1):
+        if place == 'no_place':
+            cross_num = 1
+        else:
+            for point in range(point_num - 1):
 
-            point_ymin = np.min(self.xy_range[point:point+2, 1])
-            point_ymax = np.max(self.xy_range[point:point+2, 1])
+                point_ymin = np.min(self.xy_range[point:point+2, 1])
+                point_ymax = np.max(self.xy_range[point:point+2, 1])
 
-            if check_point[1] == self.xy_range[point, 1]:
+                if check_point[1] == self.xy_range[point, 1]:
 
-                if check_point[0] < self.xy_range[point, 0]:
-                    cross_num += 1
+                    if check_point[0] < self.xy_range[point, 0]:
+                        cross_num += 1
+
+                    else:
+                        pass
+
+                elif point_ymin < check_point[1] < point_ymax:
+
+                    dx = self.xy_range[point+1, 0] - self.xy_range[point, 0]
+                    dy = self.xy_range[point+1, 1] - self.xy_range[point, 1]
+
+                    if dx == 0.0:
+                        # Line is parallel to y-axis
+                        judge_flag = self.xy_range[point, 1] - check_point[1]
+
+                    elif dy == 0.0:
+                        # Line is parallel to x-axis
+                        judge_flag = -1.0
+
+                    else:
+                        # y = ax + b (a:slope,  b:y=intercept)
+                        slope = dy / dx
+                        y_intercept = self.xy_range[point, 1] - slope * self.xy_range[point, 0]
+
+                        # left:y,  right:ax+b
+                        left_eq = check_point[1]
+                        right_eq = slope * check_point[0] + y_intercept
+
+                        judge_flag = slope * (left_eq - right_eq)
+
+
+                    if judge_flag > 0.0:
+                        # point places left side of line
+                        cross_num += 1.0
+
+                    elif judge_flag < 0.0:
+                        # point places right side of line
+                        pass
 
                 else:
                     pass
-
-            elif point_ymin < check_point[1] < point_ymax:
-
-                dx = self.xy_range[point+1, 0] - self.xy_range[point, 0]
-                dy = self.xy_range[point+1, 1] - self.xy_range[point, 1]
-
-                if dx == 0.0:
-                    # Line is parallel to y-axis
-                    judge_flag = self.xy_range[point, 1] - check_point[1]
-
-                elif dy == 0.0:
-                    # Line is parallel to x-axis
-                    judge_flag = -1.0
-
-                else:
-                    # y = ax + b (a:slope,  b:y=intercept)
-                    slope = dy / dx
-                    y_intercept = self.xy_range[point, 1] - slope * self.xy_range[point, 0]
-
-                    # left:y,  right:ax+b
-                    left_eq = check_point[1]
-                    right_eq = slope * check_point[0] + y_intercept
-
-                    judge_flag = slope * (left_eq - right_eq)
-
-
-                if judge_flag > 0.0:
-                    # point places left side of line
-                    cross_num += 1.0
-
-                elif judge_flag < 0.0:
-                    # point places right side of line
-                    pass
-
-            else:
-                pass
-
         # odd number : inside,  even number : outside
         judge_result = np.mod(cross_num, 2)
-        print(cross_num)
-        print(judge_result)
+        #print(cross_num)
+        #print(judge_result)
 
         # check judge circle mode
         if circle_flag == True:
@@ -367,6 +370,8 @@ class PostProcess():
         if place == 'Izu_land':
 
             self.fig, self.ax = plt.subplots(figsize=(15,8))
+            self.ax.xaxis.set_minor_locator(MultipleLocator(100))
+            self.ax.yaxis.set_minor_locator(MultipleLocator(100))
 
             # Set lat/long coordinates
             # point_origin : map origin
@@ -467,6 +472,8 @@ class PostProcess():
             # point_center : circle limt area
             # point_range  : limit area vertex
             self.fig, self.ax = plt.subplots(figsize=(10,8))
+            self.ax.xaxis.set_minor_locator(MultipleLocator(100))
+            self.ax.yaxis.set_minor_locator(MultipleLocator(100))
 
             self.lim_radius = 5.0   # define circle limit area
 
@@ -575,7 +582,9 @@ class PostProcess():
             # point_origin : map origin
             # point_center : circle limt area
             # point_range  : limit area vertex
-            self.fig, self.ax = plt.subplots(figsize=(10,8))
+            self.fig, self.ax = plt.subplots(figsize=(11,5))
+            self.ax.xaxis.set_minor_locator(MultipleLocator(100))
+            self.ax.yaxis.set_minor_locator(MultipleLocator(100))
             self.lim_radius = 10.0   # define circle limit area
 
 
@@ -585,11 +594,11 @@ class PostProcess():
             self.xy_center = np.zeros((1,2))
             self.xy_range = np.zeros((5,2))
 
-            self.xy_range[0,]=[100,100]
-            self.xy_range[1,]=[100,-100]
-            self.xy_range[2,]=[-100,-100]
-            self.xy_range[3,]=[-100,100]
-            self.xy_range[4,]=self.xy_range[0,]
+            #self.xy_range[0,]=[100,100]
+            #self.xy_range[1,]=[100,-100]
+            #self.xy_range[2,]=[-100,-100]
+            #self.xy_range[3,]=[-100,100]
+            #self.xy_range[4,]=self.xy_range[0,]
 
 
             # Setup MAP image --------------------------
@@ -604,7 +613,7 @@ class PostProcess():
             self.ax.add_patch(circle)
             self.ax.plot(0, 0, '.', color=color_circle)
 
-            self.ax.plot(self.xy_range[:,0], self.xy_range[:,1], '--', color=color_line)
+            #self.ax.plot(self.xy_range[:,0], self.xy_range[:,1], '--', color=color_line)
             #plt.plot(self.xy_range[:,0], self.xy_range[:,1], '.', color='r')
 
 
@@ -627,7 +636,7 @@ class PostProcess():
         for dir in range(dir_pat):
             for vel in range(vel_pat):
                 case = vel * dir_pat + dir
-                self.judge_result[dir, vel] = judge.judge_inside(self.drop_point[case,:])
+                self.judge_result[dir, vel] = judge.judge_inside(self.drop_point[case,:],self.place)
 
         # Plot scatter graph on MAP
         cmap = plt.get_cmap("cool")
@@ -739,9 +748,17 @@ class PostProcess():
         plt.xlabel("x(m)")
         plt.ylabel("y(m)")
         plt.legend()
-        plt.grid(linestyle=":");
+        plt.grid(which='both',linestyle=":")
+        self.ax.set_aspect('equal')
+
         # fig内でのaxes座標を取得，戻り値はBbox
         ax_pos = self.ax.get_position()
+
+        if "Cmq" not in stdin_rocket:
+            Cmq = -(stdin_rocket["Cna"]/2)*( ( (stdin_rocket["CPlen"] - stdin_rocket["CGlen_f"])/ stdin_rocket["ref_len"] ) )**2
+        else:
+            Cmq = stdin_rocket.get("Cmq", -2.0)
+
         # fig内座標でテキストを表示 Bboxは Bbox.x0, Bbox.x1, Bbox.y0, Bbox.y1で座標を取得できる
         self.fig.text(ax_pos.x0 - 0.25, ax_pos.y1-0.4, "Team    : " + stdin_info.get("TEAM")+"\n"
                                                   "Name    : " + stdin_info.get("NAME")+"\n"
@@ -757,7 +774,7 @@ class PostProcess():
                                                   "CPlen   : " + str(stdin_rocket["CPlen"])+"[m]\n"
                                                   "Cd      : " + str(stdin_rocket["Cd"])+"\n"
                                                   "Cna     : " + str(stdin_rocket["Cna"])+"\n"
-                                                  "Cmq     : " + str(stdin_rocket.get("Cmq", -2.0))
+                                                  "Cmq     : " + "{:.4f}".format(Cmq)
                                                   )
         self.fig.text(ax_pos.x1+0.01 , ax_pos.y0,'Max height {:.3f}m (wind {}m/s {} deg )'.format(np.amax(max_height_buff),max_height_vel,max_height_dir)+"\n"
                                                              'Max veloity {:.3f}m/s (wind {}m/s {} deg)'.format(np.amax(max_vel_buff),max_vel_vel,max_vel_dir)+"\n"

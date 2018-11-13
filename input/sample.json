@@ -18,7 +18,6 @@
 	"CPlen":	1.166,
 	"Cd":		0.52,
 	"Cna":		3.5,
-	"Cmq":		-0.019425253,
 	"vel_1st":	9.4398,
 	"op_type_1st":	0,
 	"delay_time_1st": 0
@@ -29,7 +28,7 @@
 },
 
 "environment":{
-	"place":	"nosiro_land",
+	"place":	"no_place",
 	"rail_len":	5.0,
 	"rail_azi":	-130.0,
 	"rail_elev": 80

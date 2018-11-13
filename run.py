@@ -149,7 +149,7 @@ try:
     print("CPlen   : " + str(stdin_rocket["CPlen"]))
     print("Cd      : " + str(stdin_rocket["Cd"]))
     print("Cna     : " + str(stdin_rocket["Cna"]))
-    print("Cmq     : " + str(stdin_rocket.get("Cmq", -2.0)))
+
 
 except KeyError:
     print("===========================================================================")
@@ -158,6 +158,13 @@ except KeyError:
     print("Please check parameter at ./input/****.json.")
     print("==========================================================================")
     sys.exit()
+
+
+if "Cmq" not in stdin_rocket:
+    Cmq = -(stdin_rocket["Cna"]/2)*( ( (stdin_rocket["CPlen"] - stdin_rocket["CGlen_f"])/ stdin_rocket["ref_len"] ) )**2
+    print("Cmq     : " + str(Cmq))
+else:
+    print("Cmq     : " + str(stdin_rocket.get("Cmq", -2.0)))
 
 # Load 1st parachute parameter
 if "vel_1st" not in stdin_rocket:

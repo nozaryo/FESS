@@ -303,10 +303,6 @@ class RocketSim:
             self.max_height =  pos[2]
             self.peak_time = time
 
-        ## Store trajectory peak time
-        #if vel[2] >= 0.0:
-        #    self.peak_time = time
-
         # Coasting
         Cd = self.Cd
         Cn_p = self.Cna * alpha

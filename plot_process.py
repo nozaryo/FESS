@@ -145,7 +145,7 @@ class JudgeInside():
         return judge_result
 
 
-class PostProcess():
+class PlotProcess():
     """
     Compute physical values in this method.
 
@@ -601,7 +601,24 @@ class PostProcess():
             #self.xy_range[3,]=[-100,100]
             #self.xy_range[4,]=self.xy_range[0,]
 
+            # Convert pixel to meter
+            pixel2meter = 0.34862385
 
+            # Set map image
+            img_map = Image.open("./map/baseboll.png")
+            #img_map = img_map.rotate(self.mag_dec_deg)
+            img_list = np.asarray(img_map)
+            img_height = img_map.size[1]
+            img_width = img_map.size[0]
+            img_origin = np.array([250,380])  # TODO : compute by lat/long of launcher point
+
+            # Define image range
+            img_left =   -1.0 * img_origin[0] * pixel2meter
+            img_right = (img_width - img_origin[0]) * pixel2meter
+            img_top = img_origin[1] * pixel2meter
+            img_bottom = -1.0 * (img_height - img_origin[1]) * pixel2meter
+
+            self.ax.imshow(img_list, extent=(img_left, img_right, img_bottom, img_top))
             # Setup MAP image --------------------------
             # Define color
             color_line = '#ffbf00'    # Yellow
@@ -620,7 +637,7 @@ class PostProcess():
 
 
 
-    def plot_scatter(self, filename, wind_case,deg,ie,op_flg):
+    def plot_scatter(self, filename, wind_case,deg,ie,op_flg,elev_mode):
 
 
         # Define computation pattern
@@ -671,12 +688,12 @@ class PostProcess():
             max_height_vel = (int)(np.argmax(max_height_buff)/wind_case[3])#*wind_case[1]+wind_case[0]
             max_height_dir = (np.argmax(max_height_buff)%wind_case[3])#*(360/wind_case[3])
 
-            if self.judge_result[int(max_height_dir),int(max_height_vel)] == False :
+            if self.judge_result[int(max_height_dir),int(int(max_height_vel)%(wind_case[2]))] == False :
                 max_height_buff[np.argmax(max_height_buff)] = 0
             elif max_height_dir == 1 :
                 max_height_buff[np.argmax(max_height_buff)] = 0
             else :
-                max_height_vel = max_height_vel*wind_case[1]+wind_case[0]
+                max_height_vel = int(max_height_vel)%(wind_case[2])*wind_case[1]+wind_case[0]
                 max_height_dir = max_height_dir*(360/wind_case[3])
                 break
 
@@ -688,12 +705,12 @@ class PostProcess():
             max_vel_vel = (int)(np.argmax(max_vel_buff)/wind_case[3])#*wind_case[1]+wind_case[0]
             max_vel_dir = (np.argmax(max_vel_buff)%wind_case[3])#*(360/wind_case[3])
 
-            if self.judge_result[int(max_vel_dir),int(max_vel_vel)] == False :
+            if self.judge_result[int(max_vel_dir),int(int(max_vel_vel)%(wind_case[2]))] == False :
                 max_vel_buff[np.argmax(max_vel_buff)] = 0
             elif max_vel_dir == 1 :
                 max_vel_buff[np.argmax(max_vel_buff)] = 0
             else :
-                max_vel_vel = max_vel_vel*wind_case[1]+wind_case[0]
+                max_vel_vel = int(max_vel_vel)%(wind_case[2])*wind_case[1]+wind_case[0]
                 max_vel_dir = max_vel_dir*(360/wind_case[3])
                 break
 
@@ -705,12 +722,12 @@ class PostProcess():
             min_launch_vel = (int)(np.argmin(launch_clear_vel_buff[np.nonzero(launch_clear_vel_buff)])/wind_case[3])#*wind_case[1]+wind_case[0]
             min_launch_dir = (np.argmin(launch_clear_vel_buff[np.nonzero(launch_clear_vel_buff)])%wind_case[3])#*(360/wind_case[3])
 
-            if self.judge_result[int(min_launch_dir),int(min_launch_vel)] == False :
+            if self.judge_result[int(min_launch_dir),int(int(min_launch_vel)%(wind_case[2]))] == False :
                 launch_clear_vel_buff[np.argmin(launch_clear_vel_buff[np.nonzero(launch_clear_vel_buff)])] = 999
             elif min_launch_dir == 1 :
                 launch_clear_vel_buff[np.argmin(launch_clear_vel_buff[np.nonzero(launch_clear_vel_buff)])] = 999
             else :
-                min_launch_vel = min_launch_vel*wind_case[1]+wind_case[0]
+                min_launch_vel = int(min_launch_vel)%(wind_case[2])*wind_case[1]+wind_case[0]
                 min_launch_dir = min_launch_dir*(360/wind_case[3])
                 break
 
@@ -722,12 +739,12 @@ class PostProcess():
             max_drop_vel_vel = (int)(np.argmax(max_drop_vel_buff)/wind_case[3])#*wind_case[1]+wind_case[0]
             max_drop_vel_dir = (np.argmax(max_drop_vel_buff)%wind_case[3])#*(360/wind_case[3])
 
-            if self.judge_result[int(max_drop_vel_dir),int(max_drop_vel_vel)] == False :
+            if self.judge_result[int(max_drop_vel_dir),int(int(max_drop_vel_vel)%(wind_case[2]))] == False :
                 max_drop_vel_buff[np.argmax(max_drop_vel_buff)] = 0
             elif max_drop_vel_dir == 1 :
                 max_drop_vel_buff[np.argmax(max_drop_vel_buff)] = 0
             else :
-                max_drop_vel_vel = max_drop_vel_vel*wind_case[1]+wind_case[0]
+                max_drop_vel_vel = int(max_drop_vel_vel)%(wind_case[2])*wind_case[1]+wind_case[0]
                 max_drop_vel_dir = max_drop_vel_dir*(360/wind_case[3])
                 break
 
@@ -782,8 +799,10 @@ class PostProcess():
                                                              'Minimum launch clear vel {:.3f}m/s (wind {}m/s {} deg)'.format(np.amin(launch_clear_vel_buff[np.nonzero(launch_clear_vel_buff)]),min_launch_vel,min_launch_dir)+"\n"
                                                              'Max drop veloity {:.3f}m/s (wind {}m/s {} deg)'.format(np.amax(max_drop_vel_buff),max_drop_vel_vel,max_drop_vel_dir),fontsize=7)
 
-        plt.savefig('./result/{}deg.png'.format(int(deg)))
-        plt.show()
+        now = datetime.datetime.today()
+        plt.savefig('./result/{}deg_{}_{}_{}_{}_{}_{}.png'.format(int(deg),now.year,now.month,now.day,now.hour,now.minute,now.second))
+        if elev_mode == 0:
+            plt.show()
 
 
     def plot_orbit(var):

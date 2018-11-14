@@ -40,5 +40,13 @@
 	"motor_2nd": "",
 	"iject_time_2nd": "",
 	"iject_heught_2nd": ""
+	},
+
+"environment":{
+	"place":	"no_place",
+	"rail_len":	5.0,
+	"rail_azi":	-130.0,
+	"rail_elev": "Azimuth[deg](0deg:East,  90deg:North)"
 	}
+
 }

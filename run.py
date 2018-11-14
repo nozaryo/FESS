@@ -24,18 +24,18 @@ import plot_process as plot
 
 # Define computation setting ---------------------------
 dt = 0.001        # time interval
-end_time = 1000.0        # computation end time
+end_time = 2000.0        # computation end time
 
 # Define wind pattern setting
 wind_vel_st = 1.0    # minimum wind velocity [m/s]
-wind_vel_interval = 2.0    # interval of wind velocity [m/s]
-vel_pat = 3   # velocity range [m/s]
+wind_vel_interval = 1.0    # interval of wind velocity [m/s]
+vel_pat = 7   # velocity range [m/s]
 dir_pat = 8   # wind direction derivation (deg = 360.0/dir_pat)
 
 # Define launcher elevation setting
-elev_st = 86.0    # Launcher elevation start angle [deg]
+elev_st = 80.0    # Launcher elevation start angle [deg]
 elev_interval = 1.0    # Launche elevation angle interval [deg]
-elev_pat = 2    # Launcher elevation range
+elev_pat = 3    # Launcher elevation range
 
 # Define vector ---------------------------------------
 time_vec = np.arange(0, end_time, dt)
@@ -45,7 +45,7 @@ wind_case = np.array([wind_vel_st, wind_vel_interval, vel_pat, dir_pat])
 
 # Generate rsim object ----------------------------------------
 sim = cal.RocketSim()
-post =  plot.PostProcess()
+post =  plot.PlotProcess()
 
 def get_option():
     args = ArgumentParser(prog='F.T.E. Rocket Simulating System')
@@ -67,7 +67,11 @@ if __name__ == '__main__':
 
 files = os.listdir("./input/")
 
+#if '.json' in args.json[0]:
+#    args.json[0] = args.json[0]+".json"
+
 if not args.json in files:
+
     if args.json:
         print("")
         print("Input wrong file name. Please input again.")
@@ -193,7 +197,7 @@ elif 's' in args.mode[0]:
 if not args.parachute:
     print("")
     print("==> Select parachute mode")
-    print("0: Trajectory,  1: Open one stage parachute")
+    print("0: Trajectory,  1: Open parachute")
     op_flg = input('>> ')
     op_flg = int(op_flg)
 else:
@@ -229,7 +233,11 @@ elif elev_mode == 1:
     print("Launcher elevation : {0} - {1} deg".format(rail_elev, rail_elev + elev_pat -1.0))
 
 rail_len = float(stdin_env.get("rail_len"))
-rail_azi = float(stdin_env.get("rail_azi"))
+if stdin_env.get("place") == 'no_place':
+    rail_azi = 90.0
+else:
+    rail_azi = float(stdin_env.get("rail_azi"))
+
 rail_cond = np.array([rail_len, rail_elev, rail_azi])
 
 # Execute Rocket simulation ------------------------------------
@@ -297,6 +305,7 @@ elif sim_mode == 1:
                 # Store result
                 post.set_variety(result, wind_cond,rail_cond)
 
+
         # Copy overlapped value for plotting
         drop_point[:, -1, :] = drop_point[:, 0, :]
 
@@ -306,7 +315,7 @@ elif sim_mode == 1:
 
         # Post process
         post.set_map(stdin_env.get("place"))
-        post.plot_scatter(filename,wind_case,rail_cond[1],ie,op_flg)
+        post.plot_scatter(filename,wind_case,rail_cond[1],ie,op_flg,elev_mode)
 
     print("")
     print("Calculation end!")

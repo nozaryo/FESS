@@ -47,6 +47,7 @@ wind_case = np.array([wind_vel_st, wind_vel_interval, vel_pat, dir_pat])
 sim = cal.RocketSim()
 post =  plot.PlotProcess()
 
+
 def get_option():
     args = ArgumentParser(prog='F.T.E. Rocket Simulating System')
     args.add_argument('-J','--json',default="",type=str, metavar='file_name',

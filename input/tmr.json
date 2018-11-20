@@ -24,7 +24,7 @@
 	},
 
 "motor":{
-	"motor_file":	"Hypertek_L200.txt"
+	"motor_file":	"Hypertek_J170.txt"
 },
 
 "environment":{

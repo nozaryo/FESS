@@ -24,11 +24,11 @@
 	},
 
 "motor":{
-	"motor_file":	"FTE_j170.txt"
+	"motor_file":	"Hypertek_L200.txt"
 },
 
 "environment":{
-	"place":	"nosiro_land",
+	"place":	"no_place",
 	"rail_len":	5.0,
 	"rail_azi":	-130.0,
 	"rail_elev": 80

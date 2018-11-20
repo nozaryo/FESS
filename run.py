@@ -234,10 +234,8 @@ elif elev_mode == 1:
     print("Launcher elevation : {0} - {1} deg".format(rail_elev, rail_elev + elev_pat -1.0))
 
 rail_len = float(stdin_env.get("rail_len"))
-if stdin_env.get("place") == 'no_place':
-    rail_azi = 90.0
-else:
-    rail_azi = float(stdin_env.get("rail_azi"))
+
+rail_azi = float(stdin_env.get("rail_azi"))
 
 rail_cond = np.array([rail_len, rail_elev, rail_azi])
 
@@ -315,7 +313,7 @@ elif sim_mode == 1:
                 print([i,j,drop_point[0,j,i],drop_point[1,j,i]])
 
         # Post process
-        post.set_map(stdin_env.get("place"))
+        post.set_map(stdin_env.get("place"),rail_cond)
         post.plot_scatter(filename,wind_case,rail_cond[1],ie,op_flg,elev_mode)
 
     print("")

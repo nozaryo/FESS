@@ -361,7 +361,7 @@ class PlotProcess():
 
 
 
-    def set_map(self, place):
+    def set_map(self, place,rail_cond):
         """ Set lat/lon coordinates to define MAP """
 
         earth_radius = 6378150.0    # [km]
@@ -606,12 +606,16 @@ class PlotProcess():
 
             # Set map image
             img_map = Image.open("./map/baseboll.png")
+            img_map = img_map.rotate(rail_cond[2]-90.0)
             #img_map = img_map.rotate(self.mag_dec_deg)
             img_list = np.asarray(img_map)
+
             img_height = img_map.size[1]
             img_width = img_map.size[0]
-            img_origin = np.array([250,380])  # TODO : compute by lat/long of launcher point
-
+            origin = np.array([250-img_width/2.0 ,380-img_height/2.0])  # TODO : compute by lat/long of launcher point
+            origin = np.array([origin[0]*np.cos(np.deg2rad(-(rail_cond[2]-90.0)))-origin[1]*np.sin(np.deg2rad(-(rail_cond[2]-90.0))),
+                                   origin[0]*np.sin(np.deg2rad(-(rail_cond[2]-90.0)))+origin[1]*np.cos(np.deg2rad(-(rail_cond[2]-90.0)))])
+            img_origin = np.array([origin[0]+img_width/2.0,origin[1]+img_height/2.0])
             # Define image range
             img_left =   -1.0 * img_origin[0] * pixel2meter
             img_right = (img_width - img_origin[0]) * pixel2meter
@@ -762,12 +766,19 @@ class PlotProcess():
         stdin_info = stdin_json["info"]
         stdin_rocket = stdin_json["rocket"]
         stdin_motor = stdin_json["motor"]
+        stdin_env = stdin_json["environment"]
+
 
         plt.xlabel("x(m)")
         plt.ylabel("y(m)")
         plt.legend()
         plt.grid(which='both',linestyle=":")
         self.ax.set_aspect('equal')
+
+
+        azi = stdin_env.get("rail_azi")
+
+        self.ax.arrow(0,0,60*np.cos(np.deg2rad(azi)),60*np.sin(np.deg2rad(azi)), width=20, head_width=50, head_length=30, fc='k', ec='k',alpha = 0.5)
 
         # fig内でのaxes座標を取得，戻り値はBbox
         ax_pos = self.ax.get_position()

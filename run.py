@@ -195,6 +195,7 @@ elif 'd' in args.mode[0]:
 elif 's' in args.mode[0]:
     sim_mode = 1
 
+
 if not args.parachute:
     print("")
     print("==> Select parachute mode")

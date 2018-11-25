@@ -311,13 +311,12 @@ class PlotProcess():
         #print("max kakudo between axis and vel: {0} deg".format(self.max_kakudo_deg[0]))
         print("drop point   : {0}".format(self.drop_point[0,:]))
 
-        plt.figure()
-        plt.plot(self.time_vec, self.vel_norm, label='vel_norm')
-        plt.xlabel("time[sec]")
-        plt.ylabel("vel[m/s]")
-        plt.legend()
-
-        plt.show()
+        #plt.figure()
+        #plt.plot(self.time_vec, self.vel_norm, label='vel_norm')
+        #plt.xlabel("time[sec]")
+        #plt.ylabel("vel[m/s]")
+        #plt.legend()
+        #plt.show()
 
         plt.show()
 

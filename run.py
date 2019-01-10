@@ -50,17 +50,22 @@ post =  plot.PlotProcess()
 
 def get_option():
     args = ArgumentParser(prog='F.T.E. Rocket Simulating System')
+
     args.add_argument('-J','--json',default="",type=str, metavar='file_name',
                            help='json file name ')
+
     args.add_argument('-M','--mode',
                             type=str, choices=['d','s','sm','ss'], nargs=1, metavar='mode',
                             help="Select mode d:detail s:scatter ss:scatter single sm:scatter multiple")
+
     args.add_argument('-P','--parachute',
                             type=int, choices=[0,1], nargs=1, metavar='open_mood',
                             help="Select parachute mode 0: Trajectory,  1: Open one stage parachute")
+
     args.add_argument('-W','--wind',
                             type=float, nargs=2, metavar=('vel','dir'),
-                            help="inut wind velocity and direction")
+                            help="input wind velocity and direction")
+
     return args.parse_args()
 
 if __name__ == '__main__':

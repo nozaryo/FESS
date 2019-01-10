@@ -28,7 +28,7 @@
 },
 
 "environment":{
-	"place":	"nosiro_land",
+	"place":	"no_place",
 	"rail_len":	5.0,
 	"rail_azi":	-130.0,
 	"rail_elev": 80

@@ -50,10 +50,10 @@ class JudgeInside():
         # Check limit circle area is defined
         try:
             self.xy_center
-            circle_flag = True
+            outCircle_flag = True
 
         except AttributeError:
-            circle_flag = False
+            outCircle_flag = False
 
 
         # Initialize count of line cross number
@@ -120,7 +120,7 @@ class JudgeInside():
         #print(judge_result)
 
         # check judge circle mode
-        if circle_flag == True:
+        if outCircle_flag == True:
 
             center_num = self.xy_center.shape[0]
 
@@ -144,6 +144,104 @@ class JudgeInside():
 
         return judge_result
 
+    def judge_inside_cicrle(self, check_point, place):
+
+        # Check limit circle area is defined
+        try:
+            self.xy_center
+            outCircle_flag = True
+
+        except AttributeError:
+            outCircle_flag = False
+
+
+        # Initialize count of line cross number
+        cross_num = 0
+
+        # Count number of range area
+        point_num = self.outCicrle_range.shape[0]
+
+        # Judge inside or outside by cross number
+        if place == 'no_place':
+            cross_num = 1
+        else:
+            for point in range(point_num - 1):
+
+                point_ymin = np.min(self.xy_range[point:point+2, 1])
+                point_ymax = np.max(self.xy_range[point:point+2, 1])
+
+                if check_point[1] == self.xy_range[point, 1]:
+
+                    if check_point[0] < self.xy_range[point, 0]:
+                        cross_num += 1
+
+                    else:
+                        pass
+
+                elif point_ymin < check_point[1] < point_ymax:
+
+                    dx = self.xy_range[point+1, 0] - self.xy_range[point, 0]
+                    dy = self.xy_range[point+1, 1] - self.xy_range[point, 1]
+
+                    if dx == 0.0:
+                        # Line is parallel to y-axis
+                        judge_flag = self.xy_range[point, 1] - check_point[1]
+
+                    elif dy == 0.0:
+                        # Line is parallel to x-axis
+                        judge_flag = -1.0
+
+                    else:
+                        # y = ax + b (a:slope,  b:y=intercept)
+                        slope = dy / dx
+                        y_intercept = self.xy_range[point, 1] - slope * self.xy_range[point, 0]
+
+                        # left:y,  right:ax+b
+                        left_eq = check_point[1]
+                        right_eq = slope * check_point[0] + y_intercept
+
+                        judge_flag = slope * (left_eq - right_eq)
+
+
+                    if judge_flag > 0.0:
+                        # point places left side of line
+                        cross_num += 1.0
+
+                    elif judge_flag < 0.0:
+                        # point places right side of line
+                        pass
+
+                else:
+                    pass
+        # odd number : inside,  even number : outside
+        judge_result = np.mod(cross_num, 2)
+        #print(cross_num)
+        #print(judge_result)
+
+        # check judge circle mode
+        if outCircle_flag == True:
+
+            center_num = self.xy_center.shape[0]
+
+            for center in range(center_num):
+                # Compute distance between drop_point and center of limit circle
+                length_point = np.sqrt((check_point[0] - self.xy_center[center, 0])**2 + \
+                                       (check_point[1] - self.xy_center[center, 1])**2)
+
+                # Judge in limit circle or not
+                if length_point <= self.lim_radius:
+                    judge_result = np.bool(False)
+
+                else:
+                    pass
+
+        else:
+            pass
+
+        # Convert from float to bool (True:inside,  False:outside)
+        judge_result = np.bool(judge_result)
+
+        return judge_result
 
 class PlotProcess():
     """
@@ -635,6 +733,105 @@ class PlotProcess():
             self.ax.plot(0, 0, '.', color=color_circle)
 
             #self.ax.plot(self.xy_range[:,0], self.xy_range[:,1], '--', color=color_line)
+            #plt.plot(self.xy_range[:,0], self.xy_range[:,1], '.', color='r')
+
+        elif place == 'nosiro_land2': #何で作ったか思い出せない
+
+            # Set lat/long coordinates
+            # point_origin : map origin
+            # point_center : circle limt area
+            # point_range  : limit area vertex
+            self.fig, self.ax = plt.subplots(figsize=(10,8))
+            self.ax.xaxis.set_minor_locator(MultipleLocator(100))
+            self.ax.yaxis.set_minor_locator(MultipleLocator(100))
+
+            self.lim_radius = 5.0   # define circle limit area
+
+            self.point_origin = np.array([40.138633, 139.984850])
+
+            self.point_center = np.array([[40.138633, 139.984850]])
+
+            self.point_range = np.array([[40.139725, 139.983939],
+                                         [40.136127, 139.982133],
+                                         [40.135607, 139.981753],
+                                         [40.134911, 139.981451],
+                                         [40.134821, 139.981692],
+                                         [40.135639, 139.983324],
+                                         [40.137052, 139.984608],
+                                         [40.138053, 139.985781],
+                                         [40.139075, 139.986297],
+                                         [40.139725, 139.983939]])
+
+            self.point_center_rel = self.point_center - self.point_origin
+            self.point_range_rel = self.point_range - self.point_origin
+
+            # Set magnetic declination
+            self.mag_dec_deg = -7.53   # [deg]
+
+            mag_dec_rad = np.deg2rad(self.mag_dec_deg)
+            mat_rot = np.array([[np.cos(mag_dec_rad), -1 * np.sin(mag_dec_rad)],
+                                [np.sin(mag_dec_rad), np.cos(mag_dec_rad)]])
+
+            # Convert lat/lon to meter
+            self.lat2met = 2 * math.pi * earth_radius / 360.0
+            self.lon2met = 2 * math.pi * earth_radius * np.cos(np.deg2rad(self.point_origin[0])) / 360.0
+
+            # Convert from lat/long to meter (ENU coordinate)
+            self.xy_center = np.zeros(self.point_center.shape)
+            self.xy_range = np.zeros(self.point_range.shape)
+
+            self.xy_center[:,0] = self.lon2met * self.point_center_rel[:,1]
+            self.xy_center[:,1] = self.lat2met * self.point_center_rel[:,0]
+            self.xy_range[:,0] = self.lon2met * self.point_range_rel[:,1]
+            self.xy_range[:,1] = self.lat2met * self.point_range_rel[:,0]
+
+            # Apply magnetic effect
+            for i in range(self.point_center.shape[0]):
+                self.xy_center[i,:] = mat_rot @ self.xy_center[i,:]
+
+            for i in range(self.point_range.shape[0]):
+                self.xy_range[i,:] = mat_rot @ self.xy_range[i,:]
+
+            # Setup MAP image --------------------------
+
+
+            # Setup MAP image --------------------------
+            # Convert pixel to meter
+            pixel2meter = 0.58479532
+
+            # Set map image
+            img_map = Image.open("./map/nosiro2.png")
+            img_map = img_map.rotate(self.mag_dec_deg)
+            img_list = np.asarray(img_map)
+            img_height = img_map.size[0]
+            img_width = img_map.size[1]
+            img_origin = np.array([690,1293])  # TODO : compute by lat/long of launcher point
+
+            # Define image range
+            img_left =   -1.0 * img_origin[1] * pixel2meter
+            img_right = (img_width - img_origin[1]) * pixel2meter
+            img_top = img_origin[0] * pixel2meter
+            img_bottom = -1.0 * (img_height - img_origin[0]) * pixel2meter
+
+            #plot.figure(figsize=(10,8))
+            self.ax.imshow(img_list, extent=(img_left, img_right, img_bottom, img_top))
+
+            # Define color
+            color_line = '#ffbf00'    # Yellow
+            color_circle = 'r'    # Red
+
+            # Set circle object
+            #self.ax = plt.axes()
+
+            # plot limit area
+            for i in range(self.point_center.shape[0]):
+                circle = patches.Circle(xy=self.xy_center[i,:], radius=self.lim_radius,
+                                        ec=color_circle, fill=False)
+                self.ax.add_patch(circle)
+                self.ax.plot(self.xy_center[i,0], self.xy_center[i,1], '.', color=color_circle)
+
+
+            self.ax.plot(self.xy_range[:,0], self.xy_range[:,1], '--', color=color_line)
             #plt.plot(self.xy_range[:,0], self.xy_range[:,1], '.', color='r')
 
 

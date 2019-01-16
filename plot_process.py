@@ -54,6 +54,10 @@ class JudgeInside():
         self.radius = radius
         self.center = center
 
+    def set_border(self,line,upFlag):
+        self.border_line = line
+        self.upFlag = upFlag
+
     def judge_inside(self, check_point, place):
 
         # Check limit circle area is defined
@@ -71,6 +75,14 @@ class JudgeInside():
         except AttributeError:
             safeArea_flag = True
 
+        try:
+            self.border_line
+            border_flag = True
+
+        except AttributeError:
+            border_flag = False
+
+
         # Initialize count of line cross number
         cross_num = 0
 
@@ -81,6 +93,13 @@ class JudgeInside():
             check_point_moved = check_point - self.center
             if np.linalg.norm(check_point_moved) <= self.radius:
                 cross_num = 1
+                if border_flag:
+                    if self.upFlag:
+                        if self.border_line.y(check_point[0]) > check_point[1]:
+                            cross_num = 0
+                    else:
+                        if self.border_line.y(check_point[0]) < check_point[1]:
+                            cross_num = 0
             else:
                 cross_num = 0
 
@@ -763,7 +782,7 @@ class PlotProcess():
 
         elif place == "Izu_sea":
 
-            self.fig, self.ax = plt.subplots(figsize=(10,8))
+            self.fig, self.ax = plt.subplots(figsize=(13,8))
             self.ax.xaxis.set_minor_locator(MultipleLocator(500))
             self.ax.yaxis.set_minor_locator(MultipleLocator(500))
 
@@ -795,10 +814,10 @@ class PlotProcess():
             #x = np.arange(0, 5000, 1)
             #y = line_O2safeArea.y(x)
 
-            border = lineFunction()
-            border.calBy2point(border_point1m[0],border_point1m[1],border_point2m[0],border_point2m[1])
+            self.border = lineFunction()
+            self.border.calBy2point(border_point1m[0],border_point1m[1],border_point2m[0],border_point2m[1])
             x = np.arange(border_point1m[0], border_point2m[0], 1)
-            y = border.y(x)
+            y = self.border.y(x)
 
             img_left = -1.0 * img_origin[0] * pixel2meter
             img_right = (img_width - img_origin[0]) * pixel2meter
@@ -835,6 +854,7 @@ class PlotProcess():
             judge.set_dengerArea(self.xy_center, lim_radius=self.lim_radius)
         else:
             judge.set_safeArea(self.safeArea_originM,self.radius_safeArea)
+            judge.set_border(self.border,False)
         # Judge landing point is inside limit area or not
         for dir in range(dir_pat):
             for vel in range(vel_pat):
@@ -968,7 +988,7 @@ class PlotProcess():
             Cmq = stdin_rocket.get("Cmq", -2.0)
 
         # fig内座標でテキストを表示 Bboxは Bbox.x0, Bbox.x1, Bbox.y0, Bbox.y1で座標を取得できる
-        self.fig.text(ax_pos.x0 - 0.25, ax_pos.y1-0.4, "Team    : " + stdin_info.get("TEAM")+"\n"
+        self.fig.text(ax_pos.x0 - 0.18, ax_pos.y1-0.4, "Team    : " + stdin_info.get("TEAM")+"\n"
                                                   "Name    : " + stdin_info.get("NAME")+"\n"
                                                   "Date    : " + str(datetime.date.today())+"\n\n\n"
                                                   "ref_len : " + str(stdin_rocket["ref_len"])+"[m]\n"
@@ -984,7 +1004,7 @@ class PlotProcess():
                                                   "Cna     : " + str(stdin_rocket["Cna"])+"\n"
                                                   "Cmq     : " + "{:.4f}".format(Cmq)
                                                   )
-        self.fig.text(ax_pos.x1+0.01 , ax_pos.y0,'Max height {:.3f}m (wind {}m/s {} deg )'.format(np.amax(max_height_buff),max_height_vel,max_height_dir)+"\n"
+        self.fig.text(ax_pos.x1-0.02 , ax_pos.y0,'Max height {:.3f}m (wind {}m/s {} deg )'.format(np.amax(max_height_buff),max_height_vel,max_height_dir)+"\n"
                                                              'Max veloity {:.3f}m/s (wind {}m/s {} deg)'.format(np.amax(max_vel_buff),max_vel_vel,max_vel_dir)+"\n"
                                                              'Minimum launch clear vel {:.3f}m/s (wind {}m/s {} deg)'.format(np.amin(launch_clear_vel_buff[np.nonzero(launch_clear_vel_buff)]),min_launch_vel,min_launch_dir)+"\n"
                                                              'Max drop veloity {:.3f}m/s (wind {}m/s {} deg)'.format(np.amax(max_drop_vel_buff),max_drop_vel_vel,max_drop_vel_dir),fontsize=7)

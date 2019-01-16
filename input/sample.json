@@ -30,7 +30,7 @@
 "environment":{
 	"place":	"Izu_sea",
 	"rail_len":	5.0,
-	"rail_azi":	240.0,
+	"rail_azi":	-52.47,
 	"rail_elev": 80
 	}
 }

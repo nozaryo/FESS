@@ -28,9 +28,9 @@
 },
 
 "environment":{
-	"place":	"no_place",
+	"place":	"Izu_sea",
 	"rail_len":	5.0,
-	"rail_azi":	-130.0,
+	"rail_azi":	240.0,
 	"rail_elev": 80
 	}
 }

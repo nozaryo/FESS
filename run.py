@@ -28,9 +28,9 @@ end_time = 2000.0        # computation end time
 
 # Define wind pattern setting
 wind_vel_st = 1.0    # minimum wind velocity [m/s]
-wind_vel_interval = 1.0    # interval of wind velocity [m/s]
-vel_pat = 7   # velocity range [m/s]
-dir_pat = 8   # wind direction derivation (deg = 360.0/dir_pat)
+wind_vel_interval = 2.0    # interval of wind velocity [m/s]
+vel_pat = 3   # velocity range [m/s]
+dir_pat = 4   # wind direction derivation (deg = 360.0/dir_pat)
 
 # Define launcher elevation setting
 elev_st = 80.0    # Launcher elevation start angle [deg]
@@ -314,13 +314,14 @@ elif sim_mode == 1:
         # Copy overlapped value for plotting
         drop_point[:, -1, :] = drop_point[:, 0, :]
 
-        for i in range(int(vel_pat/wind_vel_interval)) :
+
+        for i in range(vel_pat):#for i in range(int(vel_pat/wind_vel_interval)) :
             for j in range(dir_pat) :
                 print([i,j,drop_point[0,j,i],drop_point[1,j,i]])
 
         # Post process
         post.set_map(stdin_env.get("place"),rail_cond)
-        post.plot_scatter(filename,wind_case,rail_cond[1],ie,op_flg,elev_mode)
+        post.plot_scatter(filename,wind_case,rail_cond[1],ie,op_flg,elev_mode,stdin_env.get("place"))
 
     print("")
     print("Calculation end!")

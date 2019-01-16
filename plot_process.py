@@ -12,7 +12,13 @@ from matplotlib.ticker import *
 from PIL import Image
 from mpl_toolkits.mplot3d import Axes3D
 
+class lineFunction:
+    def calBy2point(self,x1,y1,x2,y2):
+        self.a = (y2 -y1)/(x2 -x1)
+        self.b = (x2*y1 - x1*y2) / ( x2 - x1 )
 
+    def y(self,x):
+        return self.a * x + self.b
 
 class JudgeInside():
     def __init__(self):
@@ -39,187 +45,107 @@ class JudgeInside():
             self.xy_range = np.vstack((xy_range, point_first))
 
 
-    def set_limit_circle(self, xy_center, lim_radius = 50.0):
+    def set_dengerArea(self, xy_center, lim_radius = 50.0):
 
         self.xy_center = xy_center
         self.lim_radius = lim_radius
 
+    def set_safeArea(self, center, radius):
+        self.radius = radius
+        self.center = center
 
     def judge_inside(self, check_point, place):
 
         # Check limit circle area is defined
         try:
             self.xy_center
-            outCircle_flag = True
+            dengerArea_flag = True
 
         except AttributeError:
-            outCircle_flag = False
+            dengerArea_flag = False
 
-
-        # Initialize count of line cross number
-        cross_num = 0
-
-        # Count number of range area
-        point_num = self.xy_range.shape[0]
-
-        # Judge inside or outside by cross number
-        if place == 'no_place':
-            cross_num = 1
-        else:
-            for point in range(point_num - 1):
-
-                point_ymin = np.min(self.xy_range[point:point+2, 1])
-                point_ymax = np.max(self.xy_range[point:point+2, 1])
-
-                if check_point[1] == self.xy_range[point, 1]:
-
-                    if check_point[0] < self.xy_range[point, 0]:
-                        cross_num += 1
-
-                    else:
-                        pass
-
-                elif point_ymin < check_point[1] < point_ymax:
-
-                    dx = self.xy_range[point+1, 0] - self.xy_range[point, 0]
-                    dy = self.xy_range[point+1, 1] - self.xy_range[point, 1]
-
-                    if dx == 0.0:
-                        # Line is parallel to y-axis
-                        judge_flag = self.xy_range[point, 1] - check_point[1]
-
-                    elif dy == 0.0:
-                        # Line is parallel to x-axis
-                        judge_flag = -1.0
-
-                    else:
-                        # y = ax + b (a:slope,  b:y=intercept)
-                        slope = dy / dx
-                        y_intercept = self.xy_range[point, 1] - slope * self.xy_range[point, 0]
-
-                        # left:y,  right:ax+b
-                        left_eq = check_point[1]
-                        right_eq = slope * check_point[0] + y_intercept
-
-                        judge_flag = slope * (left_eq - right_eq)
-
-
-                    if judge_flag > 0.0:
-                        # point places left side of line
-                        cross_num += 1.0
-
-                    elif judge_flag < 0.0:
-                        # point places right side of line
-                        pass
-
-                else:
-                    pass
-        # odd number : inside,  even number : outside
-        judge_result = np.mod(cross_num, 2)
-        #print(cross_num)
-        #print(judge_result)
-
-        # check judge circle mode
-        if outCircle_flag == True:
-
-            center_num = self.xy_center.shape[0]
-
-            for center in range(center_num):
-                # Compute distance between drop_point and center of limit circle
-                length_point = np.sqrt((check_point[0] - self.xy_center[center, 0])**2 + \
-                                       (check_point[1] - self.xy_center[center, 1])**2)
-
-                # Judge in limit circle or not
-                if length_point <= self.lim_radius:
-                    judge_result = np.bool(False)
-
-                else:
-                    pass
-
-        else:
-            pass
-
-        # Convert from float to bool (True:inside,  False:outside)
-        judge_result = np.bool(judge_result)
-
-        return judge_result
-
-    def judge_inside_cicrle(self, check_point, place):
-
-        # Check limit circle area is defined
         try:
-            self.xy_center
-            outCircle_flag = True
+            self.xy_range
+            safeArea_flag = False
 
         except AttributeError:
-            outCircle_flag = False
-
+            safeArea_flag = True
 
         # Initialize count of line cross number
         cross_num = 0
 
-        # Count number of range area
-        point_num = self.outCicrle_range.shape[0]
+
 
         # Judge inside or outside by cross number
-        if place == 'no_place':
-            cross_num = 1
+        if safeArea_flag:
+            check_point_moved = check_point - self.center
+            if np.linalg.norm(check_point_moved) <= self.radius:
+                cross_num = 1
+            else:
+                cross_num = 0
+
         else:
-            for point in range(point_num - 1):
+            # Count number of range area
+            point_num = self.xy_range.shape[0]
 
-                point_ymin = np.min(self.xy_range[point:point+2, 1])
-                point_ymax = np.max(self.xy_range[point:point+2, 1])
+            if place == 'no_place':
+                cross_num = 1
+            else:
+                for point in range(point_num - 1):
 
-                if check_point[1] == self.xy_range[point, 1]:
+                    point_ymin = np.min(self.xy_range[point:point+2, 1])
+                    point_ymax = np.max(self.xy_range[point:point+2, 1])
 
-                    if check_point[0] < self.xy_range[point, 0]:
-                        cross_num += 1
+                    if check_point[1] == self.xy_range[point, 1]:
+
+                        if check_point[0] < self.xy_range[point, 0]:
+                            cross_num += 1
+
+                        else:
+                            pass
+
+                    elif point_ymin < check_point[1] < point_ymax:
+
+                        dx = self.xy_range[point+1, 0] - self.xy_range[point, 0]
+                        dy = self.xy_range[point+1, 1] - self.xy_range[point, 1]
+
+                        if dx == 0.0:
+                            # Line is parallel to y-axis
+                            judge_flag = self.xy_range[point, 1] - check_point[1]
+
+                        elif dy == 0.0:
+                            # Line is parallel to x-axis
+                            judge_flag = -1.0
+
+                        else:
+                            # y = ax + b (a:slope,  b:y=intercept)
+                            slope = dy / dx
+                            y_intercept = self.xy_range[point, 1] - slope * self.xy_range[point, 0]
+
+                            # left:y,  right:ax+b
+                            left_eq = check_point[1]
+                            right_eq = slope * check_point[0] + y_intercept
+
+                            judge_flag = slope * (left_eq - right_eq)
+
+
+                        if judge_flag > 0.0:
+                            # point places left side of line
+                            cross_num += 1.0
+
+                        elif judge_flag < 0.0:
+                            # point places right side of line
+                            pass
 
                     else:
                         pass
-
-                elif point_ymin < check_point[1] < point_ymax:
-
-                    dx = self.xy_range[point+1, 0] - self.xy_range[point, 0]
-                    dy = self.xy_range[point+1, 1] - self.xy_range[point, 1]
-
-                    if dx == 0.0:
-                        # Line is parallel to y-axis
-                        judge_flag = self.xy_range[point, 1] - check_point[1]
-
-                    elif dy == 0.0:
-                        # Line is parallel to x-axis
-                        judge_flag = -1.0
-
-                    else:
-                        # y = ax + b (a:slope,  b:y=intercept)
-                        slope = dy / dx
-                        y_intercept = self.xy_range[point, 1] - slope * self.xy_range[point, 0]
-
-                        # left:y,  right:ax+b
-                        left_eq = check_point[1]
-                        right_eq = slope * check_point[0] + y_intercept
-
-                        judge_flag = slope * (left_eq - right_eq)
-
-
-                    if judge_flag > 0.0:
-                        # point places left side of line
-                        cross_num += 1.0
-
-                    elif judge_flag < 0.0:
-                        # point places right side of line
-                        pass
-
-                else:
-                    pass
         # odd number : inside,  even number : outside
         judge_result = np.mod(cross_num, 2)
         #print(cross_num)
         #print(judge_result)
 
         # check judge circle mode
-        if outCircle_flag == True:
+        if dengerArea_flag == True:
 
             center_num = self.xy_center.shape[0]
 
@@ -242,6 +168,7 @@ class JudgeInside():
         judge_result = np.bool(judge_result)
 
         return judge_result
+
 
 class PlotProcess():
     """
@@ -834,22 +761,80 @@ class PlotProcess():
             self.ax.plot(self.xy_range[:,0], self.xy_range[:,1], '--', color=color_line)
             #plt.plot(self.xy_range[:,0], self.xy_range[:,1], '.', color='r')
 
+        elif place == "Izu_sea":
+
+            self.fig, self.ax = plt.subplots(figsize=(10,8))
+            self.ax.xaxis.set_minor_locator(MultipleLocator(500))
+            self.ax.yaxis.set_minor_locator(MultipleLocator(500))
+
+            img_origin = np.array([277,-210]) #(x,y)
+            safeArea_originPx = np.array([503,-435])
+            mag_dec_deg = 7.53   # [deg]
+            pixel2meter = 7.856742013157846
+            border_distance = 500 # 使ってない
+            border_point1px = np.array([189,-389])
+            border_point2px = np.array([458,-119])
+
+            color_line = '#ffbf00'
+            # Set map image
+            img_map = Image.open("./map/Izu_sea_2019_2.png")
+            img_map = img_map.rotate(mag_dec_deg)
+            img_list = np.asarray(img_map)
+            img_width = img_map.size[0]
+            img_height = img_map.size[1]
+
+            self.safeArea_originM = (safeArea_originPx - img_origin)*pixel2meter
+            border_point1m = (border_point1px - img_origin)*pixel2meter
+            border_point2m = (border_point2px - img_origin)*pixel2meter
+
+            origin = np.array([0,0])
+            self.xy_center = np.zeros([1,2])
+
+            #ine_O2safeArea = lineFunction()
+            #line_O2safeArea.calBy2point(origin[0] ,origin[1] , self.safeArea_originM[0] , self.safeArea_originM[1])
+            #x = np.arange(0, 5000, 1)
+            #y = line_O2safeArea.y(x)
+
+            border = lineFunction()
+            border.calBy2point(border_point1m[0],border_point1m[1],border_point2m[0],border_point2m[1])
+            x = np.arange(border_point1m[0], border_point2m[0], 1)
+            y = border.y(x)
+
+            img_left = -1.0 * img_origin[0] * pixel2meter
+            img_right = (img_width - img_origin[0]) * pixel2meter
+            img_top = -img_origin[1] * pixel2meter
+            img_bottom = -1.0 * (img_height + img_origin[1]) * pixel2meter
+            self.ax.plot(self.safeArea_originM[0],self.safeArea_originM[1],"yo")
+            self.ax.plot(0,0,"ro")
+
+            self.ax.plot(x,y,color=color_line,linestyle="dashed")
+
+
+            self.radius_safeArea = 2500
+
+            safeArea = patches.Circle(xy=self.safeArea_originM, radius=self.radius_safeArea,ec=color_line, fill=False)
+            self.ax.add_patch(safeArea)
+
+
+            self.ax.imshow(img_list, extent=(img_left, img_right, img_bottom, img_top))
+            #ax.imshow(img_list)
 
 
 
-    def plot_scatter(self, filename, wind_case,deg,ie,op_flg,elev_mode):
+    def plot_scatter(self, filename, wind_case,deg,ie,op_flg,elev_mode,place):
 
 
         # Define computation pattern
         vel_pat = int(wind_case[2])
         dir_pat = int(wind_case[3])
-
-        # Call JudgeInside class]
         self.judge_result = np.zeros([dir_pat, vel_pat], dtype=bool)
         judge = JudgeInside()
-        judge.set_limit_area(self.xy_range)
-        judge.set_limit_circle(self.xy_center, lim_radius=self.lim_radius)
-
+        # Call JudgeInside class]
+        if place != "Izu_sea":
+            judge.set_limit_area(self.xy_range)
+            judge.set_dengerArea(self.xy_center, lim_radius=self.lim_radius)
+        else:
+            judge.set_safeArea(self.safeArea_originM,self.radius_safeArea)
         # Judge landing point is inside limit area or not
         for dir in range(dir_pat):
             for vel in range(vel_pat):
@@ -868,10 +853,8 @@ class PlotProcess():
 
             x_point = np.r_[self.drop_point[case_st:case_en, 0], self.drop_point[case_st, 0]]
             y_point = np.r_[self.drop_point[case_st:case_en, 1], self.drop_point[case_st, 1]]
-
-            plt.plot(x_point, y_point,
+            self.ax.plot(x_point, y_point,
                      color=cmap(iter/vel_pat), label = label_name, marker='o')
-
 
 
         # show result
@@ -974,7 +957,7 @@ class PlotProcess():
 
         azi = stdin_env.get("rail_azi")
 
-        self.ax.arrow(0,0,60*np.cos(np.deg2rad(azi)),60*np.sin(np.deg2rad(azi)), width=20, head_width=50, head_length=30, fc='k', ec='k',alpha = 0.5)
+        self.ax.arrow(0,0,600*np.cos(np.deg2rad(azi)),600*np.sin(np.deg2rad(azi)), width=200, head_width=500, head_length=300, fc='k', ec='k',alpha = 0.5)
 
         # fig内でのaxes座標を取得，戻り値はBbox
         ax_pos = self.ax.get_position()

@@ -28,14 +28,14 @@ end_time = 2000.0        # computation end time
 
 # Define wind pattern setting
 wind_vel_st = 1.0    # minimum wind velocity [m/s]
-wind_vel_interval = 2.0    # interval of wind velocity [m/s]
-vel_pat = 3   # velocity range [m/s]
-dir_pat = 4   # wind direction derivation (deg = 360.0/dir_pat)
+wind_vel_interval = 1.0    # interval of wind velocity [m/s]
+vel_pat = 7   # velocity range [m/s]
+dir_pat = 16   # wind direction derivation (deg = 360.0/dir_pat)
 
 # Define launcher elevation setting
-elev_st = 80.0    # Launcher elevation start angle [deg]
-elev_interval = 1.0    # Launche elevation angle interval [deg]
-elev_pat = 3    # Launcher elevation range
+elev_st = 70.0    # Launcher elevation start angle [deg]
+elev_interval = 5.0    # Launche elevation angle interval [deg]
+elev_pat = 2   # Launcher elevation range
 
 # Define vector ---------------------------------------
 time_vec = np.arange(0, end_time, dt)
@@ -237,7 +237,7 @@ if elev_mode == 0:
 elif elev_mode == 1:
     rail_elev = elev_st
     print("")
-    print("Launcher elevation : {0} - {1} deg".format(rail_elev, rail_elev + elev_pat -1.0))
+    print("Launcher elevation : {0} - {1} deg".format(rail_elev, rail_elev + (elev_pat-1.0)*elev_interval ))
 
 rail_len = float(stdin_env.get("rail_len"))
 
@@ -283,7 +283,7 @@ elif sim_mode == 1:
 
     for ie in range(elev_pat):
 
-        rail_cond[1] = rail_elev + ie
+        rail_cond[1] = rail_elev + ie*elev_interval
 
         print("")
         print("--- Elevation = {0} deg --------------------".format(rail_cond[1]))

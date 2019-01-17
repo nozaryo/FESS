@@ -22,7 +22,7 @@ class lineFunction:
 
 img_origin = np.array([277,-210]) #(x,y)
 safeArea_originPx = np.array([503,-435])
-mag_dec_deg = 7.53   # [deg]
+mag_dec_deg = -7.53   # [deg]
 pixel2meter = 7.856742013157846
 border_distance = 500 # 使ってない
 border_point1px = np.array([189,-389])
@@ -74,7 +74,7 @@ ax.add_patch(safeArea)
 
 border_length = np.sqrt( radius_safeArea**2 - (radius_safeArea - border_distance)**2 )
 
-ax.imshow(img_list, extent=(img_left, img_right, img_bottom, img_top))
-#ax.imshow(img_list)
+#ax.imshow(img_list, extent=(img_left, img_right, img_bottom, img_top))
+ax.imshow(img_list)
 
 plt.show()

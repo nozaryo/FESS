@@ -1,65 +1,37 @@
 {
 	"info":{
-
 		"TEAM":		"FTE",
-
 		"NAME":		"tmr-00",
-
 		"DATE":		"",
-
 		"VERSION":	"2.0"
-
 		},
 
 
 
 "rocket":{
-
 	"ref_len":	1.888,
-
 	"diam":		0.1160,
-
 	"mass_i":	7.243,
-
 	"mass_f":	6.621,
-
 	"CGlen_i":	1.054,
-
 	"CGlen_f":	1.028,
-
 	"Iyz_i":	1.638,
-
 	"Iyz_f":	1.579,
-
 	"CPlen":	1.298,
-
 	"Cd":		0.45,
-
 	"Cna":		9.830,
-	"vel_1st":	8.05,
-
+	"vel_1st":	9.50,
 	"op_type_1st":	0,
 	"delay_time_1st": 0
-
 	},
-
-
 
 "motor":{
-
 	"motor_file":	"Hypertek_K240.txt"
-
 	},
-
-
-
 "environment":{
-
 	"place":	"Izu_sea",
-
 	"rail_len":	5.0,
-
-	"rail_azi":	-50.0,
-	"rail_elev": 80
+	"rail_azi":	-60.0,
+	"rail_elev": 70
 	}
 }

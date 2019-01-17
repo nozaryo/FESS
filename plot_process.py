@@ -786,13 +786,13 @@ class PlotProcess():
             self.ax.xaxis.set_minor_locator(MultipleLocator(500))
             self.ax.yaxis.set_minor_locator(MultipleLocator(500))
 
-            img_origin = np.array([277,-210]) #(x,y)
-            safeArea_originPx = np.array([503,-435])
-            mag_dec_deg = 7.53   # [deg]
+            img_origin = np.array([360,-159]) #(x,y)
+            safeArea_originPx = np.array([520,-434])
+            mag_dec_deg = -7.53   # [deg]
             pixel2meter = 7.856742013157846
             border_distance = 500 # 使ってない
-            border_point1px = np.array([189,-389])
-            border_point2px = np.array([458,-119])
+            border_point1px = np.array([227,-309])
+            border_point2px = np.array([557,-117])
 
             color_line = '#ffbf00'
             # Set map image
@@ -858,11 +858,11 @@ class PlotProcess():
         # Judge landing point is inside limit area or not
         for dir in range(dir_pat):
             for vel in range(vel_pat):
-                case = vel * dir_pat + dir
+                case = vel * dir_pat + dir + ie*dir_pat*vel_pat
                 self.judge_result[dir, vel] = judge.judge_inside(self.drop_point[case,:],self.place)
 
         # Plot scatter graph on MAP
-        cmap = plt.get_cmap("cool")
+        cmap = plt.get_cmap("spring")
 
         for iter in range(vel_pat):
             case_st = vel_pat*dir_pat*ie + iter * dir_pat
@@ -1004,7 +1004,7 @@ class PlotProcess():
                                                   "Cna     : " + str(stdin_rocket["Cna"])+"\n"
                                                   "Cmq     : " + "{:.4f}".format(Cmq)
                                                   )
-        self.fig.text(ax_pos.x1-0.02 , ax_pos.y0,'Max height {:.3f}m (wind {}m/s {} deg )'.format(np.amax(max_height_buff),max_height_vel,max_height_dir)+"\n"
+        self.fig.text(ax_pos.x1+0.01 , ax_pos.y0,'Max height {:.3f}m (wind {}m/s {} deg )'.format(np.amax(max_height_buff),max_height_vel,max_height_dir)+"\n"
                                                              'Max veloity {:.3f}m/s (wind {}m/s {} deg)'.format(np.amax(max_vel_buff),max_vel_vel,max_vel_dir)+"\n"
                                                              'Minimum launch clear vel {:.3f}m/s (wind {}m/s {} deg)'.format(np.amin(launch_clear_vel_buff[np.nonzero(launch_clear_vel_buff)]),min_launch_vel,min_launch_dir)+"\n"
                                                              'Max drop veloity {:.3f}m/s (wind {}m/s {} deg)'.format(np.amax(max_drop_vel_buff),max_drop_vel_vel,max_drop_vel_dir),fontsize=7)

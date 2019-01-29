@@ -28,9 +28,9 @@ end_time = 2000.0        # computation end time
 
 # Define wind pattern setting
 wind_vel_st = 1.0    # minimum wind velocity [m/s]
-wind_vel_interval = 1.0    # interval of wind velocity [m/s]
-vel_pat = 7   # velocity range [m/s]
-dir_pat = 16   # wind direction derivation (deg = 360.0/dir_pat)
+wind_vel_interval = 2.0    # interval of wind velocity [m/s]
+vel_pat = 3  # velocity range [m/s]
+dir_pat = 4   # wind direction derivation (deg = 360.0/dir_pat)
 
 # Define launcher elevation setting
 elev_st = 70.0    # Launcher elevation start angle [deg]

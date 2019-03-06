@@ -1,0 +1,37 @@
+{
+	"info":{
+		"TEAM":		"FTE",
+		"NAME":		"tmr-00",
+		"DATE":		"",
+		"VERSION":	"3.0"
+		},
+
+
+
+"rocket":{
+	"ref_len":	1.9210,
+	"diam":		0.116,
+	"mass_i":	7.484,
+	"mass_f":	6.673,
+	"CGlen_i":	1.109,
+	"CGlen_f":	1.078,
+	"Iyz_i":	1.570,
+	"Iyz_f":	1.470,
+	"CPlen":	1.303,
+	"Cd":		0.45,
+	"Cna":		9.830,
+	"vel_1st":	8.95,
+	"op_type_1st":	0,
+	"delay_time_1st": 0
+	},
+
+"motor":{
+	"motor_file":	"CORE_K240.txt"
+	},
+"environment":{
+	"place":	"Izu_sea",
+	"rail_len":	5.0,
+	"rail_azi":	-60.0,
+	"rail_elev": 70
+	}
+}

@@ -2,22 +2,22 @@
 	"info":{
 		"TEAM":		"FTE",
 		"NAME":		"tmr-00",
-		"DATE":		"",
-		"VERSION":	"3.0"
+		"DATE":		"190306",
+		"VERSION":	"4.1"
 		},
 
 
 
 "rocket":{
-	"ref_len":	1.9210,
+	"ref_len":	1.9150,
 	"diam":		0.116,
-	"mass_i":	7.484,
-	"mass_f":	6.673,
-	"CGlen_i":	1.109,
-	"CGlen_f":	1.078,
-	"Iyz_i":	1.570,
-	"Iyz_f":	1.470,
-	"CPlen":	1.303,
+	"mass_i":	7.598,
+	"mass_f":	6.787,
+	"CGlen_i":	1.105,
+	"CGlen_f":	1.076,
+	"Iyz_i":	1.520,
+	"Iyz_f":	1.370,
+	"CPlen":	1.299,
 	"Cd":		0.45,
 	"Cna":		9.830,
 	"vel_1st":	8.95,

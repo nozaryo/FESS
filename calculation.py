@@ -70,7 +70,7 @@ class RocketSim:
             sys.exit()
 
         if "Cmq" not in stdin_rocket:
-            self.Cmq = -(stdin_rocket["Cna"]/2)*( ( (stdin_rocket["CPlen"] - stdin_rocket["CGlen_f"])/ stdin_rocket["ref_len"] ) )**2
+            self.Cmq = -(stdin_rocket["Cna"]/2.0)*( ( (stdin_rocket["CPlen"] - stdin_rocket["CGlen_f"])/ stdin_rocket["ref_len"] ) )**2
         else:
             self.Cmq = stdin_rocket.get("Cmq", -2.0)
 

@@ -17,7 +17,7 @@ class RocketSim:
     #########################################################################
     def set_param(self, filename):
         """ Overwrite rocket parameter when this method is called """
-
+        self.peak_time = 0
         try:
             # Load parameter from user setting
             f = open('input/'+filename, 'r')
@@ -317,7 +317,7 @@ class RocketSim:
             #----------------------------------------------------------------
             if self.Cd_para_1st > 0.0:
                 if self.op_type_1st == 0:       # Detect trajectory peak
-                    if vel[2] < 0.0 and time > (self.peak_time + self.delay_time_1st):
+                    if vel[2] < 0.0 and time > (self.peak_time + self.delay_time_1st) and self.peak_time != 0:
                         op_check = 1
                         Cd_para = self.Cd_para_1st
 
@@ -334,7 +334,7 @@ class RocketSim:
                         Cd_para = self.Cd_para_2nd
 
                 elif self.op_type_2nd == 1:     # Open by fixed-time
-                    if (self.op_time_2nd + self.peak_time) < time:
+                    if (self.op_time_2nd + self.peak_time) < time and self.peak_time != 0:
                         op_check = 1
                         Cd_para = self.Cd_para_2nd
 
@@ -346,7 +346,7 @@ class RocketSim:
                         Cd_para = self.Cd_para_3rd
 
                 elif self.op_type_3rd == 1:     # Open by fixed-time
-                    if (self.op_time_3rd+self.peak_time) < time:
+                    if (self.op_time_3rd+self.peak_time) < time  and self.peak_time != 0:
                         op_check = 1
                         Cd_para = self.Cd_para_3rd
 

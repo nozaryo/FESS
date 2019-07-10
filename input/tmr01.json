@@ -1,0 +1,40 @@
+{
+ "info":{
+  "TEAM":  "FTE",
+  "NAME":  "tmr-01",
+  "DATE":  "190526-190628",
+  "VERSION": "1.1"
+  },
+
+
+
+"rocket":{
+ "ref_len": 2.22,
+ "diam":  0.116,
+ "mass_i": 9.283,
+ "mass_f": 7.663,
+ "CGlen_i": 1.271,
+ "CGlen_f": 1.194,
+ "Iyz_i": 2.676,
+ "Iyz_f": 2.260,
+ "CPlen": 1.550,
+ "Cd":  0.48,
+ "Cna":  9.17,
+ "vel_1st": 50,
+ "vel_2nd": 20,
+ "op_type_1st": 0,
+ "op_type_2nd": 1,
+ "delay_time_1st": 2,
+ "op_time_2nd": 15
+ },
+
+"motor":{
+ "motor_file": "Hypertek_L350.txt"
+ },
+"environment":{
+ "place": "nosiro_sea",
+ "rail_len": 5.0,
+ "rail_azi": 180.0,
+ "rail_elev": 70
+ }
+}

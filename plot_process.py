@@ -362,22 +362,32 @@ class PlotProcess():
         #plt.legend()
         #plt.show()
 
-        plt.show()
+##        plt.show()
+##
+##        fig = plt.figure()
+##        ax.plot(self.pos[:,0], self.pos[:,1], self.pos[:,2])
+##
+##        range_lim = np.max(np.absolute(self.pos))
+##        ax.set_xlim(-range_lim,range_lim)
+##        ax.set_ylim(-range_lim,range_lim)
+##        ax.set_zlim(0,)
+##
+##        ax.set_xlabel("X[m]")
+##        ax.set_ylabel("Y[m]")
+##        ax.set_zlabel("Up[m]")
+##
+##        plt.show()
 
-        fig = plt.figure()
-        ax = Axes3D(fig)
-        ax.plot(self.pos[:,0], self.pos[:,1], self.pos[:,2])
-
-        range_lim = np.max(np.absolute(self.pos))
-        ax.set_xlim(-range_lim,range_lim)
-        ax.set_ylim(-range_lim,range_lim)
-        ax.set_zlim(0,)
-
-        ax.set_xlabel("X[m]")
-        ax.set_ylabel("Y[m]")
-        ax.set_zlabel("Up[m]")
-
-        plt.show()
+        self.ax.plot(self.pos[-1,0], self.pos[-1,1],
+                 color='red',marker='o')
+        plt.xlabel("x(m)")
+        plt.ylabel("y(m)")
+        plt.legend()
+        plt.grid(which='both',linestyle=":")
+        self.ax.set_aspect('equal')
+        now = datetime.datetime.today()
+        plt.savefig('./result/detail_{}_{}_{}_{}_{}_{}.png'.format(now.year,now.month,now.day,now.hour,now.minute,now.second))
+        plt.show();
 
         with open("./result/result.csv", "w") as res:
             res.write(str(datetime.datetime.today())+'\n')
@@ -788,7 +798,7 @@ class PlotProcess():
 
             img_origin = np.array([360,-159]) #(x,y)
             safeArea_originPx = np.array([520,-434])
-            mag_dec_deg = -7.53   # [deg]
+            self.mag_dec_deg = -7.53   # [deg]
             pixel2meter = 7.856742013157846
             border_distance = 500 # 使ってない
             border_point1px = np.array([227,-309])
@@ -797,7 +807,7 @@ class PlotProcess():
             color_line = '#ffbf00'
             # Set map image
             img_map = Image.open("./map/Izu_sea_2019_2.png")
-            img_map = img_map.rotate(mag_dec_deg)
+            img_map = img_map.rotate(self.mag_dec_deg)
             img_list = np.asarray(img_map)
             img_width = img_map.size[0]
             img_height = img_map.size[1]
@@ -838,6 +848,63 @@ class PlotProcess():
             self.ax.imshow(img_list, extent=(img_left, img_right, img_bottom, img_top))
             #ax.imshow(img_list)
 
+        elif place == 'nosiro_sea':
+
+            # Set lat/long coordinates
+            # point_origin : map origin
+            # point_center : circle limt area
+            # point_range  : limit area vertex
+            self.fig, self.ax = plt.subplots(figsize=(11,5))
+            self.ax.xaxis.set_minor_locator(MultipleLocator(500))
+            self.ax.yaxis.set_minor_locator(MultipleLocator(500))
+            self.lim_radius = 10.0   # define circle limit area
+            self.mag_dec_deg = -8.94
+
+
+            # Set magnetic declination
+
+            # Convert from lat/long to meter (ENU coordinate)
+            self.xy_center = np.zeros((1,2))
+            self.xy_range = np.zeros((5,2))
+
+            #self.xy_range[0,]=[100,100]
+            #self.xy_range[1,]=[100,-100]
+            #self.xy_range[2,]=[-100,-100]
+            #self.xy_range[3,]=[-100,100]
+            #self.xy_range[4,]=self.xy_range[0,]
+
+            # Convert pixel to meter
+            pixel2meter = 7.246376811
+
+            # Set map image
+            img_map = Image.open("./map/nosiro_sea_2019.png")
+            img_map = img_map.rotate(self.mag_dec_deg)
+            img_list = np.asarray(img_map)
+
+            img_height = img_map.size[1]
+            img_width = img_map.size[0]
+            img_origin = np.array([1207,-982])
+            # Define image range
+            img_left = -1.0 * img_origin[0] * pixel2meter
+            img_right = (img_width - img_origin[0]) * pixel2meter
+            img_top = -img_origin[1] * pixel2meter
+            img_bottom = -1.0 * (img_height + img_origin[1]) * pixel2meter
+
+            self.ax.imshow(img_list, extent=(img_left, img_right, img_bottom, img_top))
+            # Setup MAP image --------------------------
+            # Define color
+            color_line = '#ffbf00'    # Yellow
+            color_circle = 'r'    # Red
+
+            # Set circle object
+            #self.ax = plt.axes()
+            circle = patches.Circle(xy=[0,0], radius=self.lim_radius,
+                                        ec=color_circle, fill=False)
+            self.ax.add_patch(circle)
+            self.ax.plot(0, 0, '.', color=color_circle)
+
+            #self.ax.plot(self.xy_range[:,0], self.xy_range[:,1], '--', color=color_line)
+            #plt.plot(self.xy_range[:,0], self.xy_range[:,1], '.', color='r')
 
 
     def plot_scatter(self, filename, wind_case,deg,ie,op_flg,elev_mode,place):
@@ -1034,13 +1101,29 @@ class PlotProcess():
         ax.set_ylabel("Y[m]")
         ax.set_zlabel("Up[m]")
 
+    def cov_position(self, origin_earth_pos1,origin_earth_pos2,posX,posY):
+        earth_radius = 6378150.0    # [m]
+        mag_dec_rad = np.deg2rad(self.mag_dec_deg)
+        mat_rot = np.array([[np.cos(mag_dec_rad), -1 * np.sin(mag_dec_rad)],
+                            [np.sin(mag_dec_rad), np.cos(mag_dec_rad)]])
+        pos=np.zeros(2)
+        pos=np.array([posX,posY])
+        pos = pos @ mat_rot
+        def_pos2 = ( pos[0] * 360.0 )/ (2*np.pi*earth_radius*np.sin( np.deg2rad(90-origin_earth_pos1) ))
+        def_pos1 = ( pos[1] * 360.0 )/ (2*np.pi*earth_radius)
+        return (origin_earth_pos1 + def_pos1 , origin_earth_pos2 + def_pos2,def_pos1,def_pos2)
+
+
 
 
 if __name__ == "__main__":
 
-    place = 'Izu_land'
+##    place = 'Izu_land'
+##
+##    plot_map = PostProcess()
+##
+##    plt.show()
 
-    plot_map = PostProcess()
-    plot_map.set_map(place)
-
-    plt.show()
+    post = PlotProcess()
+    post.set_map("Izu_sea",(0,0,0))
+    print(post.cov_position(34.679730,139.438373,852.38985154 ,-439.864895))

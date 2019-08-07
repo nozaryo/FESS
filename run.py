@@ -147,12 +147,11 @@ print("rail_len: " + str(stdin_env.get("rail_len")))
 print("rail_azi: " + str(stdin_env.get("rail_azi")))
 print("")
 # Load rocket parameter
-try:
-    print("wind_file: " + str(stdin_env.get("wind_file")))
-    print("")
+print("wind_file: " + str(stdin_env.get("wind_file")))
+print("")
+if stdin_env.get("wind_file") is not None:
     windFileExist = True
-except:
-    print("No wind file")
+
 
 try:
     print("ref_len : " + str(stdin_rocket["ref_len"]))

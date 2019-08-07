@@ -32,6 +32,7 @@ class RocketSim:
             stdin_rocket = stdin_json["rocket"]
             stdin_motor = stdin_json["motor"]
             stdin_env = stdin_json["environment"]
+            self.windFileName = str(stdin_env.get("wind_file", 0));
             self.env.wind_file_set(str(stdin_env.get("wind_file", 0)))
 
         except json.decoder.JSONDecodeError:
@@ -243,6 +244,7 @@ class RocketSim:
 
         """
         # Set each function from var
+        self.env.wind_file_set(self.windFileName)
         mass = var[0]
         dif_len = self.CPlen - var[1]
         Iyz = var[2]

@@ -93,8 +93,10 @@ class setEnv:
             self.speedList.insert(0,self.speedList[0])
             self.dirList.insert(0,self.dirList[0])
             self.wind_file_exist = True
+        else:
+            self.wind_file_exist = False
 
-            return
+        return
 
 
     #########################################################################
@@ -180,20 +182,40 @@ if __name__ == "__main__":
 
     print("Wind plot")
 
-    count = 1000
-    ref_height = 2.0
-    ref_wind = np.array([3.0,180.0])
-    max_height = 10.0
+#    count = 1000
+#    ref_height = 2.0
+#    ref_wind = np.array([3.0,180.0])
+#    max_height = 10.0
+#    height = np.zeros(count)
+#    wind = np.zeros([3,count])
+
+#    for i in range(count):
+
+#        height[i] = (max_height/count) * i
+#        wind[:,i] = wind_method(height[i],ref_wind)
+
+#    plt.plot(wind[0,:],height)
+#    plt.xlim(0,wind[0,-1]+1.0)
+#    plt.xlabel("wind velocity[m/s]", fontsize=18)
+#    plt.ylabel("altitude[m]", fontsize=18)
+#    plt.show()
+
+    count = 10000
+    max_height = 3000.0
     height = np.zeros(count)
     wind = np.zeros([3,count])
-
+    ref_wind = np.array([3.0,180.0])
+    env = setEnv()
+    env.wind_setting()
+    env.wind_file_set('./input/wind_data/wind_august_noshiro_nominal.csv')
     for i in range(count):
 
         height[i] = (max_height/count) * i
-        wind[:,i] = wind_method(height[i],ref_wind)
+        wind[:,i] = env.wind_method(height[i],ref_wind)
 
     plt.plot(wind[0,:],height)
-    plt.xlim(0,wind[0,-1]+1.0)
+    plt.xlim(0,max(wind[1,:])+1.0)
+    plt.ylim(0,max_height)
     plt.xlabel("wind velocity[m/s]", fontsize=18)
     plt.ylabel("altitude[m]", fontsize=18)
     plt.show()

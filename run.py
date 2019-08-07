@@ -19,7 +19,7 @@ from scipy.integrate import odeint
 
 import calculation as cal
 import quaternion as qt
-import environment as env
+import environment
 import plot_process as plot
 
 # Define computation setting ---------------------------
@@ -46,7 +46,7 @@ wind_case = np.array([wind_vel_st, wind_vel_interval, vel_pat, dir_pat])
 # Generate rsim object ----------------------------------------
 sim = cal.RocketSim()
 post =  plot.PlotProcess()
-
+env = environment.setEnv()
 
 def get_option():
     args = ArgumentParser(prog='F.T.E. Rocket Simulating System')
@@ -71,8 +71,9 @@ def get_option():
 if __name__ == '__main__':
     args = get_option()
 
-files = os.listdir("./input/")
 
+files = os.listdir("./input/")
+windFileExist = False
 #if '.json' in args.json[0]:
 #    args.json[0] = args.json[0]+".json"
 
@@ -147,6 +148,13 @@ print("rail_azi: " + str(stdin_env.get("rail_azi")))
 print("")
 # Load rocket parameter
 try:
+    print("wind_file: " + str(stdin_env.get("wind_file")))
+    print("")
+    windFileExist = True
+except:
+    print("No wind file")
+
+try:
     print("ref_len : " + str(stdin_rocket["ref_len"]))
     print("diam    : " + str(stdin_rocket["diam"]))
     print("CGlen_i : " + str(stdin_rocket["CGlen_i"]))
@@ -189,12 +197,15 @@ print("delay_time_1st: " + str(stdin_rocket.get("delay_time_1st", 0.0)))
 print("vel_2nd : " + str(stdin_rocket.get("vel_2nd", 0.0)))    # 0 means not to open 2nd para
 
 sim.set_param(filename)
-if not args.mode:
+
+if (not args.mode) and  (not windFileExist):
     print("")
     print("==> Select Simulation Mode")
     print("0: Detail Result,  1: Scatter Result")
     sim_mode = input('>> ')
     sim_mode = int(sim_mode)
+elif windFileExist:
+    sim_mode = 0
 elif 'd' in args.mode[0]:
     sim_mode = 0
 elif 's' in args.mode[0]:
@@ -250,7 +261,7 @@ if sim_mode == 0:
     # Detail mode
 
     # Set wind condition
-    if not args.wind:
+    if (not args.wind) and  (not windFileExist):
         print("")
         print("==> Input wind velocity [m/s]")
         wind_vel = input('>> ')
@@ -260,9 +271,12 @@ if sim_mode == 0:
         print("==> Input wind direction [deg] (East:0deg, North:90deg)")
         wind_dir = input('>> ')
         wind_dir = float(wind_dir)
-    else:
+    elif args.wind:
         wind_vel = args.wind[0]
         wind_dir = args.wind[1]
+    elif windFileExist:
+        wind_vel = 0
+        wind_dir = 0
 
     wind_cond = np.array([wind_vel, wind_dir])
 

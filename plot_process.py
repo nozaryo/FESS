@@ -4,7 +4,7 @@ import datetime
 import json
 import numpy as np
 import quaternion as qt
-import environment as env
+import environment
 import numpy.linalg as nplin
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -233,6 +233,10 @@ class PlotProcess():
 
 
     def set_variety(self, result ,wind_cond,launcher_condition):
+        env = environment.setEnv()
+        env.wind_setting()
+
+
 
         #print("post processing...")
 
@@ -362,7 +366,7 @@ class PlotProcess():
         #plt.legend()
         #plt.show()
 
-##        plt.show()
+#        plt.show()
 ##
 ##        fig = plt.figure()
 ##        ax.plot(self.pos[:,0], self.pos[:,1], self.pos[:,2])
@@ -909,6 +913,17 @@ class PlotProcess():
 
     def plot_scatter(self, filename, wind_case,deg,ie,op_flg,elev_mode,place):
 
+        f = open('input/'+filename, 'r')
+        stdin_json = json.load(f)
+        f.close()
+        stdin_info = stdin_json["info"]
+        stdin_rocket = stdin_json["rocket"]
+        stdin_motor = stdin_json["motor"]
+        stdin_env = stdin_json["environment"]
+        env.wind_file_set(str(stdin_env.get("wind_file", 0)))
+
+        env = environment.setEnv()
+        env.wind_setting()
 
         # Define computation pattern
         vel_pat = int(wind_case[2])
@@ -1020,19 +1035,12 @@ class PlotProcess():
 
         print('Max drop veloity {}m/s (wind {}m/s {} deg)'.format(np.amax(max_drop_vel_buff),max_drop_vel_vel,max_drop_vel_dir))
 
-        f = open('input/'+filename, 'r')
-        stdin_json = json.load(f)
-        f.close()
+
 
         if op_flg==1:
             plt.title("Parachute "+ str(deg)+"deg")
         else:
             plt.title("Trajectory "+ str(deg)+"deg")
-
-        stdin_info = stdin_json["info"]
-        stdin_rocket = stdin_json["rocket"]
-        stdin_motor = stdin_json["motor"]
-        stdin_env = stdin_json["environment"]
 
 
         plt.xlabel("x(m)")

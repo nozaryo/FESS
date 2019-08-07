@@ -33,6 +33,7 @@
  },
 "environment":{
  "place": "nosiro_sea",
+ "wind_file": "./input/wind_data/wind_august_noshiro_nominal.csv",
  "rail_len": 5.0,
  "rail_azi": 180.0,
  "rail_elev": 70

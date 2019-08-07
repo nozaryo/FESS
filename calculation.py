@@ -7,7 +7,7 @@ import scipy as sp
 import numpy.linalg as nplin
 import quaternion as qt
 import thrust as th
-import environment as env
+import environment
 from scipy.integrate import odeint
 
 #########################################################################
@@ -17,6 +17,10 @@ class RocketSim:
     #########################################################################
     def set_param(self, filename):
         """ Overwrite rocket parameter when this method is called """
+        self.env = environment.setEnv()
+        self.env.wind_setting()
+
+
         self.peak_time = 0
         try:
             # Load parameter from user setting
@@ -27,6 +31,8 @@ class RocketSim:
             stdin_info = stdin_json["info"]
             stdin_rocket = stdin_json["rocket"]
             stdin_motor = stdin_json["motor"]
+            stdin_env = stdin_json["environment"]
+            self.env.wind_file_set(str(stdin_env.get("wind_file", 0)))
 
         except json.decoder.JSONDecodeError:
             print("===========================================================================")
@@ -211,6 +217,7 @@ class RocketSim:
 
     #########################################################################
     def rocket_dynamics(self, var, time):
+
         """
         Function of calculating rocket dynamics only for trajectory orbit
 
@@ -252,8 +259,8 @@ class RocketSim:
         mom_b = np.empty(3)
         dcm = qt.quat2dcm(quat)
         Gravity = np.array([0.0, 0.0, -9.81])
-        wind_vel = env.wind_method(pos[2], self.wind)
-        temp, pres, dens = env.gas_param(pos[2])
+        wind_vel = self.env.wind_method(pos[2], self.wind)
+        temp, pres, dens = self.env.gas_param(pos[2])
 
         # Define velocity vector and norm
         vel_b = dcm @ (vel - wind_vel)
